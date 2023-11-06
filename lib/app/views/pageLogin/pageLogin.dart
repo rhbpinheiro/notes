@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes/app/shared/constants.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
+import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetButton.dart';
 import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
@@ -34,124 +35,140 @@ class _PageLoginState extends State<PageLogin> {
         decoration: const BoxDecoration(
           gradient: gradient,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                !register ? 'Login' : 'Cadastre-se',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: context.screenHeight * .2,
               ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            WidgetTextFormField(
-              controller: tedUser,
-              title: 'Usuário',
-              obscureText: false,
-              autofocus: true,
-              icon: const Icon(Icons.person),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            WidgetTextFormField(
-              controller: tedPassword,
-              title: 'Senha',
-              obscureText: true,
-              autofocus: false,
-              icon: const Icon(Icons.lock),
-            ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              reverseDuration: const Duration(milliseconds: 500),
-              child: register
-                  ? Column(
-                      children: [
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        WidgetTextFormField(
-                          controller: tedConfirmPassword,
-                          title: 'Confirme a Senha',
-                          obscureText: true,
-                          autofocus: false,
-                          icon: const Icon(Icons.lock),
-                        ),
-                      ],
-                    )
-                  : Container(),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              children: [
-                WidgetButton(
-                  width: 150,
-                  height: 40,
-                  title: register ? 'Cadastre-se' : 'Entar',
-                  background: const Color(0xff44bd6e),
-                  titleColor: Colors.white,
-                  voidFunction: () {
-                    if (!register) {
-                      _signIn();
-                    } else {
-                      _register();
-                    }
-                  },
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(
+                  !register ? 'Login' : 'Cadastre-se',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                  ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Não tem conta? ',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          register = !register;
-                        });
-                      },
-                      child: Text(
-                        'Cadastre-se',
+              ]),
+              const SizedBox(
+                height: 40,
+              ),
+              WidgetTextFormField(
+                hintText: 'Email',
+                controller: tedUser,
+                title: 'Usuário',
+                obscureText: false,
+                autofocus: true,
+                prefixIcon: const Icon(Icons.person),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              WidgetTextFormField(
+                hintText: 'Senha',
+                controller: tedPassword,
+                title: 'Senha',
+                obscureText: true,
+                autofocus: false,
+                prefixIcon: const Icon(Icons.lock),
+                suffixIcon: Icon(Icons.visibility),
+                funcVisibility: () {
+                  setState(() {});
+                },
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                reverseDuration: const Duration(milliseconds: 500),
+                child: register
+                    ? Column(
+                        children: [
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          WidgetTextFormField(
+                            hintText: 'Confirm a Senha',
+                            controller: tedConfirmPassword,
+                            title: 'Confirme a Senha',
+                            obscureText: true,
+                            autofocus: false,
+                            prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: Icon(Icons.visibility),
+                            funcVisibility: () {
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      )
+                    : Container(),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Column(
+                children: [
+                  WidgetButton(
+                    width: 150,
+                    height: 40,
+                    title: register ? 'Cadastre-se' : 'Entar',
+                    background: const Color(0xff44bd6e),
+                    titleColor: Colors.white,
+                    voidFunction: () {
+                      if (!register) {
+                        _signIn();
+                      } else {
+                        _register();
+                      }
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Não tem conta? ',
                         style: TextStyle(
-                          color: Colors.brown.shade900,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.brown.shade900,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const Spacer(),
-            InkWell(
-              onTap: () {},
-              child: const Text(
-                'Política de Privacidade',
-                style: TextStyle(
-                  color: Colors.white,
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            register = !register;
+                          });
+                        },
+                        child: Text(
+                          'Cadastre-se',
+                          style: TextStyle(
+                            color: Colors.brown.shade900,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.brown.shade900,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: context.screenHeight * .2,
+              ),
+              InkWell(
+                onTap: () {},
+                child: const Text(
+                  'Política de Privacidade',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            )
-          ],
+              const SizedBox(
+                height: 30,
+              )
+            ],
+          ),
         ),
       ),
     );
