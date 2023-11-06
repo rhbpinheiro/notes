@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notes/app/shared/constants.dart';
+import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/widgets/WidgetButton.dart';
+import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,13 +35,24 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 30,
             ),
-            WidgetButton(
-              width: 150,
-              height: 40,
-              title: 'Entar',
-              background: const Color(0xff44bd6e),
-              titleColor: Colors.white,
-              voidFunction: () {},
+            Container(
+              width: context.screenWidth * .8,
+              height: context.screenHeight * .4,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            const WidgetTextFormField(
+              title: '',
+              obscureText: false,
+              autofocus: false,
+              suffixIcon: Icon(Icons.add),
+              prefixIcon: SizedBox.shrink(),
+              hintText: 'Digite seu texto',
             ),
             const Spacer(),
             InkWell(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:notes/app/controllers/loginController.dart';
 import 'package:notes/app/shared/constants.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
@@ -17,9 +19,12 @@ class _PageLoginState extends State<PageLogin> {
   TextEditingController tedUser = TextEditingController();
   TextEditingController tedPassword = TextEditingController();
   TextEditingController tedConfirmPassword = TextEditingController();
+  LoginController loginController = LoginController();
   bool register = false;
   @override
   Widget build(BuildContext context) {
+    print(loginController.email);
+    print(loginController.password);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -56,26 +61,23 @@ class _PageLoginState extends State<PageLogin> {
               ),
               WidgetTextFormField(
                 hintText: 'Email',
-                controller: tedUser,
                 title: 'Usuário',
                 obscureText: false,
-                autofocus: true,
+                autofocus: false,
                 prefixIcon: const Icon(Icons.person),
+                onChanged: loginController.setEmail,
               ),
               const SizedBox(
                 height: 30,
               ),
               WidgetTextFormField(
                 hintText: 'Senha',
-                controller: tedPassword,
                 title: 'Senha',
                 obscureText: true,
                 autofocus: false,
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: Icon(Icons.visibility),
-                funcVisibility: () {
-                  setState(() {});
-                },
+                onChanged: loginController.setPassword,
               ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
@@ -88,15 +90,12 @@ class _PageLoginState extends State<PageLogin> {
                           ),
                           WidgetTextFormField(
                             hintText: 'Confirm a Senha',
-                            controller: tedConfirmPassword,
                             title: 'Confirme a Senha',
                             obscureText: true,
                             autofocus: false,
                             prefixIcon: const Icon(Icons.lock),
                             suffixIcon: Icon(Icons.visibility),
-                            funcVisibility: () {
-                              setState(() {});
-                            },
+                            onChanged: loginController.setConfirmPassword,
                           ),
                         ],
                       )
@@ -176,41 +175,42 @@ class _PageLoginState extends State<PageLogin> {
 
   bool _validate() {
     final RegExp specialChars = RegExp(r'[!@#%^&*()]');
-    if (tedUser.text.length > 20 || tedPassword.text.length > 20) {
+    if (loginController.email.length > 20 ||
+        loginController.password.length > 20) {
       Messages(context).showError(
           'Os campos Usuário e Senha devem conter no máximo 20 caracteres.');
       return false;
     }
-    if (tedUser.text.isEmpty) {
+    if (loginController.email.isEmpty) {
       Messages(context).showError('O campo Usuário é obrigatorio.');
       return false;
     }
-    if (tedUser.text.endsWith(' ')) {
+    if (loginController.email.endsWith(' ')) {
       Messages(context)
           .showError('O campo Usuário não pode terminar com espaço.');
       return false;
     }
-    if (tedPassword.text.endsWith(' ')) {
+    if (loginController.password.endsWith(' ')) {
       Messages(context)
           .showError('O campo Senha não pode terminar com espaço.');
       return false;
     }
-    if (tedPassword.text.isEmpty) {
+    if (loginController.password.isEmpty) {
       Messages(context).showError('O campo Senha é obrigatorio.');
       return false;
     }
-    if (tedPassword.text.length <= 2) {
+    if (loginController.password.length <= 2) {
       Messages(context)
           .showError('O campo Senha deve conter mais de 2 caracteres.');
       return false;
     }
-    if (specialChars.hasMatch(tedPassword.text)) {
+    if (specialChars.hasMatch(loginController.password)) {
       Messages(context)
           .showError('O campo Senha não pode ter caracteres especiais.');
       return false;
     }
     if (register) {
-      if (tedPassword.text != tedConfirmPassword.text) {
+      if (loginController.password != loginController.confirmPassword) {
         Messages(context)
             .showError('Os campo Senha e Confirme a Senha dever ser iguais.');
         return false;
