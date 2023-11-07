@@ -6,7 +6,7 @@ class WidgetButton extends StatelessWidget {
   final String title;
   final Color background;
   final Color titleColor;
-  final VoidCallback voidFunction;
+  final Function() function;
 
   const WidgetButton({
     Key? key,
@@ -15,13 +15,13 @@ class WidgetButton extends StatelessWidget {
     required this.title,
     required this.background,
     required this.titleColor,
-    required this.voidFunction,
+    required this.function,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: voidFunction,
+      onTap: function,
       child: Container(
         width: width,
         height: height,

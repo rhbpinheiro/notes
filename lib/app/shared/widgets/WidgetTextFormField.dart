@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 
 class WidgetTextFormField extends StatelessWidget {
+  final TextEditingController controller;
   final String title;
   final String hintText;
   final bool? obscureText;
   final bool? autofocus;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final bool? readOnly;
   final Function(String)? onChanged;
 
   const WidgetTextFormField({
@@ -18,7 +20,9 @@ class WidgetTextFormField extends StatelessWidget {
     this.autofocus,
     this.prefixIcon,
     this.suffixIcon,
+    this.readOnly,
     this.onChanged,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,7 @@ class WidgetTextFormField extends StatelessWidget {
             autofocus: autofocus!,
             obscureText: obscureText!,
             onChanged: onChanged,
+            readOnly: readOnly!,
             decoration: InputDecoration(
               hintText: hintText,
               filled: true,
@@ -51,7 +56,8 @@ class WidgetTextFormField extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             ),
           ),
         ],
