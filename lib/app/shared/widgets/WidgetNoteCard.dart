@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class WidgetNoteCard extends StatelessWidget {
   final VoidCallback funcDelete;
@@ -33,7 +34,13 @@ class WidgetNoteCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(noteText),
+          Expanded(
+            child: AutoSizeText(
+              noteText,
+              minFontSize: 8,
+              maxLines: 3,
+            ),
+          ),
           Row(
             children: [
               InkWell(

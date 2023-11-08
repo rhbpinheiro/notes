@@ -1,13 +1,19 @@
-class NoteModel {
-  final String id;
-  final String text;
-
-  NoteModel({required this.id, required this.text});
-
-  factory NoteModel.fromJson(Map<String, dynamic> json) {
-    return NoteModel(
-      id: json['id'],
-      text: json['text'],
-    );
+  class NoteModel {
+    String? text;
+    String? id;
+  
+    NoteModel({this.text, this.id});
+  
+    NoteModel.fromJson(Map<String, dynamic> json) {
+      text = json['text'];
+      id = json['id'];
+    }
+  
+    Map<String, dynamic> toJson() {
+      final Map<String, dynamic> data = new Map<String, dynamic>();
+      data['text'] = this.text;
+      data['id'] = this.id;
+      return data;
+    }
   }
-}
+  

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:notes/app/shared/constants.dart';
-import 'package:notes/app/shared/helpers/loader.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetButton.dart';
 import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/stores/loginStore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -25,10 +25,14 @@ class _PageLoginState extends State<PageLogin> {
   @override
   void initState() {
     super.initState();
+    loginStore.getPrefsLogin();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(loginStore.email);
+    print(loginStore.password);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -74,35 +78,41 @@ class _PageLoginState extends State<PageLogin> {
                         const SizedBox(
                           height: 40,
                         ),
-                        WidgetTextFormField(
-                          hintText: 'Email',
-                          title: 'Usuário',
-                          readOnly: false,
-                          obscureText: false,
-                          controller: emailController,
-                          autofocus: false,
-                          prefixIcon: const Icon(Icons.person),
-                          onChanged: loginStore.setEmail,
-                        ),
+                        Observer(builder: (_) {
+                          return WidgetTextFormField(
+                            hintText: 'Email',
+                            title: 'Usuário',
+                            readOnly: false,
+                            obscureText: false,
+                            controller: emailController,
+                            autofocus: false,
+                            prefixIcon: const Icon(Icons.person),
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: loginStore.setEmail,
+                          );
+                        }),
                         const SizedBox(
                           height: 30,
                         ),
-                        WidgetTextFormField(
-                          hintText: 'Senha',
-                          title: 'Senha',
-                          readOnly: false,
-                          controller: passwordController,
-                          obscureText: !loginStore.visibilityPassword,
-                          autofocus: false,
-                          prefixIcon: const Icon(Icons.lock),
-                          suffixIcon: InkWell(
-                            onTap: loginStore.setVisibilityPassword,
-                            child: Icon(loginStore.visibilityPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                          ),
-                          onChanged: loginStore.setPassword,
-                        ),
+                        Observer(builder: (_) {
+                          return WidgetTextFormField(
+                            keyboardType: TextInputType.text,
+                            hintText: 'Senha',
+                            title: 'Senha',
+                            readOnly: false,
+                            controller: passwordController,
+                            obscureText: !loginStore.visibilityPassword,
+                            autofocus: false,
+                            prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: InkWell(
+                              onTap: loginStore.setVisibilityPassword,
+                              child: Icon(loginStore.visibilityPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                            ),
+                            onChanged: loginStore.setPassword,
+                          );
+                        }),
                         const SizedBox(
                           height: 30,
                         ),
@@ -199,6 +209,7 @@ class _PageLoginState extends State<PageLogin> {
   void _signIn() async {
     if (_validate()) {
       loginStore.setLoading();
+      loginStore.savePrefsLogin(loginStore.email, loginStore.password);
       await Future.delayed(Duration(seconds: 2));
       Messages(context).showSuccess('Login efetuado com sucesso.');
       loginStore.setLoading();

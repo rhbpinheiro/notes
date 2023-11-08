@@ -47,4 +47,26 @@ class NoteController {
       throw Exception('Erro ao excluir nota da API');
     }
   }
+
+Future<NoteModel?> update(String id, String newText) async {
+  final response = await http.put(
+    Uri.parse('$apiUrl/notes/$id'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'text': newText,
+    }),
+    
+  );
+
+  if (response.statusCode == 200) {
+    return NoteModel.fromJson(json.decode(response.body));
+  } else {
+    print('Erro ao atualizar nota na API: ${response.statusCode}');
+    return null; 
+  }
+}
+
+
 }

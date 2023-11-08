@@ -9,20 +9,92 @@ part of 'notesStore.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$NotesStore on _NotesStoreBase, Store {
-  late final _$notesAtom =
-      Atom(name: '_NotesStoreBase.notes', context: context);
+  Computed<bool>? _$isFormValidComputed;
 
   @override
-  String get notes {
-    _$notesAtom.reportRead();
-    return super.notes;
+  bool get isFormValid =>
+      (_$isFormValidComputed ??= Computed<bool>(() => super.isFormValid,
+              name: '_NotesStoreBase.isFormValid'))
+          .value;
+
+  late final _$noteTitleAtom =
+      Atom(name: '_NotesStoreBase.noteTitle', context: context);
+
+  @override
+  String get noteTitle {
+    _$noteTitleAtom.reportRead();
+    return super.noteTitle;
   }
 
   @override
-  set notes(String value) {
-    _$notesAtom.reportWrite(value, super.notes, () {
-      super.notes = value;
+  set noteTitle(String value) {
+    _$noteTitleAtom.reportWrite(value, super.noteTitle, () {
+      super.noteTitle = value;
     });
+  }
+
+  late final _$editIsvalidAtom =
+      Atom(name: '_NotesStoreBase.editIsvalid', context: context);
+
+  @override
+  bool get editIsvalid {
+    _$editIsvalidAtom.reportRead();
+    return super.editIsvalid;
+  }
+
+  @override
+  set editIsvalid(bool value) {
+    _$editIsvalidAtom.reportWrite(value, super.editIsvalid, () {
+      super.editIsvalid = value;
+    });
+  }
+
+  late final _$noteListAtom =
+      Atom(name: '_NotesStoreBase.noteList', context: context);
+
+  @override
+  List<NoteModel>? get noteList {
+    _$noteListAtom.reportRead();
+    return super.noteList;
+  }
+
+  @override
+  set noteList(List<NoteModel>? value) {
+    _$noteListAtom.reportWrite(value, super.noteList, () {
+      super.noteList = value;
+    });
+  }
+
+  late final _$addNotesAsyncAction =
+      AsyncAction('_NotesStoreBase.addNotes', context: context);
+
+  @override
+  Future<void> addNotes() {
+    return _$addNotesAsyncAction.run(() => super.addNotes());
+  }
+
+  late final _$removeNotesAsyncAction =
+      AsyncAction('_NotesStoreBase.removeNotes', context: context);
+
+  @override
+  Future<void> removeNotes(String noteId) {
+    return _$removeNotesAsyncAction.run(() => super.removeNotes(noteId));
+  }
+
+  late final _$editNotesAsyncAction =
+      AsyncAction('_NotesStoreBase.editNotes', context: context);
+
+  @override
+  Future<void> editNotes(String noteId, String newText) {
+    return _$editNotesAsyncAction.run(() => super.editNotes(noteId, newText));
+  }
+
+  late final _$getNotesListAsyncAction =
+      AsyncAction('_NotesStoreBase.getNotesList', context: context);
+
+  @override
+  Future<List<dynamic>> getNotesList() {
+    return _$getNotesListAsyncAction.run(() => super.getNotesList());
   }
 
   late final _$_NotesStoreBaseActionController =
@@ -40,9 +112,23 @@ mixin _$NotesStore on _NotesStoreBase, Store {
   }
 
   @override
+  void seteditIsvalid() {
+    final _$actionInfo = _$_NotesStoreBaseActionController.startAction(
+        name: '_NotesStoreBase.seteditIsvalid');
+    try {
+      return super.seteditIsvalid();
+    } finally {
+      _$_NotesStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-notes: ${notes}
+noteTitle: ${noteTitle},
+editIsvalid: ${editIsvalid},
+noteList: ${noteList},
+isFormValid: ${isFormValid}
     ''';
   }
 }

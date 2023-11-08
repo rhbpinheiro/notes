@@ -73,6 +73,23 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
+  late final _$getPrefsLoginAsyncAction =
+      AsyncAction('_LoginStoreBase.getPrefsLogin', context: context);
+
+  @override
+  Future<void> getPrefsLogin() {
+    return _$getPrefsLoginAsyncAction.run(() => super.getPrefsLogin());
+  }
+
+  late final _$savePrefsLoginAsyncAction =
+      AsyncAction('_LoginStoreBase.savePrefsLogin', context: context);
+
+  @override
+  Future<void> savePrefsLogin(String email, String password) {
+    return _$savePrefsLoginAsyncAction
+        .run(() => super.savePrefsLogin(email, password));
+  }
+
   late final _$_LoginStoreBaseActionController =
       ActionController(name: '_LoginStoreBase', context: context);
 

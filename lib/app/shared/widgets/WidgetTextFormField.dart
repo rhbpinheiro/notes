@@ -11,9 +11,11 @@ class WidgetTextFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool? readOnly;
   final Function(String)? onChanged;
+  final TextInputType keyboardType;
 
-  const WidgetTextFormField({
+  WidgetTextFormField({
     Key? key,
+    required this.controller,
     required this.title,
     required this.hintText,
     this.obscureText,
@@ -22,7 +24,7 @@ class WidgetTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.readOnly,
     this.onChanged,
-    required this.controller,
+    required this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,7 @@ class WidgetTextFormField extends StatelessWidget {
             obscureText: obscureText!,
             onChanged: onChanged,
             readOnly: readOnly!,
+            keyboardType: keyboardType,
             decoration: InputDecoration(
               hintText: hintText,
               filled: true,

@@ -5,6 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:notes/app/controller/noteController.dart';
 import 'package:notes/app/models/noteModel.dart';
 import 'package:notes/app/shared/constants.dart';
+import 'package:notes/app/shared/helpers/loader.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/widgets/WidgetNoteCard.dart';
@@ -21,154 +22,156 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<NoteModel>? notes;
+
   NotesStore notesStore = NotesStore();
-  Future<List<NoteModel>> getNotes() async {
-    notes = await NoteController().getAllNotes();
-    return notes!;
+  TextEditingController controller = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    notesStore.getNotesList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Notes',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          title: const Text(
+            'Notes',
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xFF1f5466),
         ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF1f5466),
-      ),
-      body: FutureBuilder(
-        future: getNotes(),
-        builder: (context, snapshot) {
-          return Container(
-            alignment: Alignment.center,
-            height: double.infinity,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: gradient,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'My Notes',
+        body: Container(
+          alignment: Alignment.center,
+          height: double.infinity,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: gradient,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'My Notes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Observer(
+                  builder: (_) {
+                    return WidgetTextFormField(
+                      keyboardType: TextInputType.text,
+                      title: '',
+                      controller: controller,
+                      obscureText: false,
+                      autofocus: true,
+                      readOnly: false,
+                      suffixIcon: !notesStore.isFormValid
+                          ? null
+                          : InkWell(
+                              onTap: () async {
+                                print(controller.text);
+                                print("mobx==== ${notesStore.noteTitle}");
+                                print(notesStore.editIsvalid);
+
+                                if (notesStore.editIsvalid) {
+                                  notesStore.getNotesList();
+                                  notesStore.seteditIsvalid();
+                                  controller.clear();
+                                  notesStore.setNotes('');
+                                } else {
+                                  await notesStore.addNotes();
+                                }
+                              },
+                              child: Icon(notesStore.editIsvalid
+                                  ? Icons.save
+                                  : Icons.add),
+                            ),
+                      hintText: notesStore.editIsvalid
+                          ? notesStore.noteTitle
+                          : 'Digite seu texto',
+                      onChanged: notesStore.setNotes,
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Builder(builder: (context) {
+                  return Container(
+                    width: context.screenWidth * .85,
+                    height: context.screenHeight * .5,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Observer(builder: (context) {
+                      return (notesStore.noteList!.length != 0)
+                          ? ListView.builder(
+                              itemCount: notesStore.noteList!.length,
+                              itemBuilder: ((context, index) {
+                                final note = notesStore.noteList![index];
+                                return WidgetNoteCard(
+                                  funcDelete: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          WidgetConfirmationDialog(
+                                        title: 'Atenção!',
+                                        message: 'Deseja Realmente Excluir?',
+                                        onConfirm: () async {
+                                          await notesStore
+                                              .removeNotes(note.id!);
+                                          Navigator.of(context).pop();
+                                          Messages(context).showSuccess(
+                                              'Anotação removida com sucesso.');
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  funcEdit: () async {
+                                    notesStore.seteditIsvalid();
+                                    if (notesStore.noteList != null) {
+                                      // controller.text =
+                                      //     selectedNote.first.text!;
+                                    }
+                                  },
+                                  noteText: note.text!,
+                                );
+                              }),
+                            )
+                          : Center(child: Text('Sem Anotações.'));
+                    }),
+                  );
+                }),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: context.screenHeight * 0.1 / 2,
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: const Text(
+                    'Política de Privacidade',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 30,
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Observer(builder: (_) {
-                    return Container(
-                      width: context.screenWidth * .85,
-                      height: context.screenHeight * .5,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ListView.builder(
-                        itemCount: notes!.length,
-                        itemBuilder: ((context, index) {
-                          final note = notes![index];
-                          return WidgetNoteCard(
-                            funcDelete: () async {
-                              showDialog(
-                                context: context,
-                                builder: (context) => WidgetConfirmationDialog(
-                                  title: 'Atenção!',
-                                  message: 'Deseja Realmente Excluir?',
-                                  onConfirm: () async {
-                                    await NoteController().delete(note.id);
-                                    Navigator.of(context).pop();
-                                    Messages(context).showSuccess(
-                                        'Anotação removida com sucesso.');
-                                  },
-                                ),
-                              );
-                            },
-                            funcEdit: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => WidgetConfirmationDialog(
-                                  title: 'Atenção!',
-                                  message: 'Deseja Confirmar a Edição?',
-                                  onConfirm: () async {
-                                    await NoteController().delete(note.id);
-                                    Navigator.of(context).pop();
-                                    Messages(context).showSuccess(
-                                        'Anotação Editada com sucesso.');
-                                  },
-                                ),
-                              );
-                              notesStore.setNotes(note.text);
-                              notesStore.seteditIsvalid;
-                              print(notesStore.notes);
-                            },
-                            noteText: note.text,
-                          );
-                        }),
-                      ),
-                    );
-                  }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Observer(
-                    builder: (_) {
-                      return WidgetTextFormField(
-                        title: '',
-                        controller: TextEditingController(),
-                        obscureText: false,
-                        autofocus: true,
-                        readOnly: notesStore.editIsvalid,
-                        suffixIcon: notesStore.notes == ''
-                            ? null
-                            : InkWell(
-                                onTap: () async {
-                                  notesStore.setNotes(notesStore.notes);
-                                  await NoteController()
-                                      .addNote(notesStore.notes);
-
-                                  Messages(context).showSuccess(
-                                      'Anotação enviada com sucesso.');
-                                },
-                                child: const Icon(
-                                  Icons.add,
-                                ),
-                              ),
-                        hintText: notesStore.notes == ''
-                            ? 'Digite seu texto'
-                            : notesStore.notes,
-                        onChanged: notesStore.setNotes,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: context.screenHeight * 0.2,
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: const Text(
-                      'Política de Privacidade',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 30,
+                )
+              ],
             ),
-          );
-        },
-      ),
-    );
+          ),
+        ));
   }
 }
