@@ -17,6 +17,22 @@ mixin _$NotesStore on _NotesStoreBase, Store {
               name: '_NotesStoreBase.isFormValid'))
           .value;
 
+  late final _$loagindNoteAtom =
+      Atom(name: '_NotesStoreBase.loagindNote', context: context);
+
+  @override
+  bool get loagindNote {
+    _$loagindNoteAtom.reportRead();
+    return super.loagindNote;
+  }
+
+  @override
+  set loagindNote(bool value) {
+    _$loagindNoteAtom.reportWrite(value, super.loagindNote, () {
+      super.loagindNote = value;
+    });
+  }
+
   late final _$noteTitleAtom =
       Atom(name: '_NotesStoreBase.noteTitle', context: context);
 
@@ -53,15 +69,31 @@ mixin _$NotesStore on _NotesStoreBase, Store {
       Atom(name: '_NotesStoreBase.noteList', context: context);
 
   @override
-  List<NoteModel>? get noteList {
+  ObservableList<NoteModel> get noteList {
     _$noteListAtom.reportRead();
     return super.noteList;
   }
 
   @override
-  set noteList(List<NoteModel>? value) {
+  set noteList(ObservableList<NoteModel> value) {
     _$noteListAtom.reportWrite(value, super.noteList, () {
       super.noteList = value;
+    });
+  }
+
+  late final _$selectedNoteAtom =
+      Atom(name: '_NotesStoreBase.selectedNote', context: context);
+
+  @override
+  NoteModel get selectedNote {
+    _$selectedNoteAtom.reportRead();
+    return super.selectedNote;
+  }
+
+  @override
+  set selectedNote(NoteModel value) {
+    _$selectedNoteAtom.reportWrite(value, super.selectedNote, () {
+      super.selectedNote = value;
     });
   }
 
@@ -101,6 +133,17 @@ mixin _$NotesStore on _NotesStoreBase, Store {
       ActionController(name: '_NotesStoreBase', context: context);
 
   @override
+  void setLoading() {
+    final _$actionInfo = _$_NotesStoreBaseActionController.startAction(
+        name: '_NotesStoreBase.setLoading');
+    try {
+      return super.setLoading();
+    } finally {
+      _$_NotesStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setNotes(String value) {
     final _$actionInfo = _$_NotesStoreBaseActionController.startAction(
         name: '_NotesStoreBase.setNotes');
@@ -123,11 +166,24 @@ mixin _$NotesStore on _NotesStoreBase, Store {
   }
 
   @override
+  void handleItemSelection(NoteModel note) {
+    final _$actionInfo = _$_NotesStoreBaseActionController.startAction(
+        name: '_NotesStoreBase.handleItemSelection');
+    try {
+      return super.handleItemSelection(note);
+    } finally {
+      _$_NotesStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
+loagindNote: ${loagindNote},
 noteTitle: ${noteTitle},
 editIsvalid: ${editIsvalid},
 noteList: ${noteList},
+selectedNote: ${selectedNote},
 isFormValid: ${isFormValid}
     ''';
   }

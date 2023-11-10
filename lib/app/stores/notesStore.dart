@@ -7,7 +7,13 @@ part 'notesStore.g.dart';
 class NotesStore = _NotesStoreBase with _$NotesStore;
 
 abstract class _NotesStoreBase with Store {
-  static const String notesKey = 'notesList';
+  @observable
+  bool loagindNote = false;
+
+  @action
+  void setLoading() {
+    loagindNote = !loagindNote;
+  }
 
   @observable
   String noteTitle = '';
@@ -27,14 +33,20 @@ abstract class _NotesStoreBase with Store {
   }
 
   @observable
-  List<NoteModel>? noteList = [];
+  ObservableList<NoteModel> noteList = ObservableList<NoteModel>();
 
   @action
   Future<void> addNotes() async {
     final newNote = NoteModel(text: noteTitle);
-    noteList = List.from(noteList!..add(newNote));
-    await NoteController()
-      ..addNote(newNote.text!);
+
+    final addedNote = await NoteController().addNote(newNote.text!);
+
+    if (addedNote != null) {
+      // noteList = ObservableList.of([...noteList, addedNote]);
+      noteList.insert(0, addedNote);
+    } else {
+      print("Erro ao adicionar a nota à API.");
+    }
   }
 
   @action
@@ -51,7 +63,18 @@ abstract class _NotesStoreBase with Store {
 
   @action
   Future<List<dynamic>> getNotesList() async {
-    noteList = await NoteController().getAllNotes();
-    return noteList!;
+    List<NoteModel> fetchedNotes = await NoteController().getAllNotes();
+
+    noteList = ObservableList.of(fetchedNotes);
+
+    return fetchedNotes;
+  }
+
+  @observable
+  NoteModel selectedNote = NoteModel();
+
+  @action
+  void handleItemSelection(NoteModel note) {
+    selectedNote = note;
   }
 }

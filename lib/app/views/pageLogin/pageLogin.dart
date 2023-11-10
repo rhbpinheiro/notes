@@ -36,7 +36,7 @@ class _PageLoginState extends State<PageLogin> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Notes',
+          'Anotações',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,

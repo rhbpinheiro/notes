@@ -8,9 +8,11 @@ import 'package:notes/app/shared/constants.dart';
 import 'package:notes/app/shared/helpers/loader.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
+import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetNoteCard.dart';
 import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/shared/widgets/widgetConfirmDialog.dart';
+import 'package:notes/app/stores/loginStore.dart';
 import 'package:notes/app/stores/notesStore.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +26,8 @@ class _HomePageState extends State<HomePage> {
   List<NoteModel>? notes;
 
   NotesStore notesStore = NotesStore();
+  LoginStore login = LoginStore();
+  late List<String> userEmail;
   TextEditingController controller = TextEditingController();
   @override
   void initState() {
@@ -33,12 +37,25 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(login.email);
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Notes',
+            'Anotações',
             style: TextStyle(color: Colors.white),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(AppRoutes.AUTH_OR_HOME);
+              },
+              icon: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+            )
+          ],
           centerTitle: true,
           backgroundColor: const Color(0xFF1f5466),
         ),
@@ -54,7 +71,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'My Notes',
+                  'Minhas Anotações',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 30,
@@ -76,15 +93,18 @@ class _HomePageState extends State<HomePage> {
                           ? null
                           : InkWell(
                               onTap: () async {
-                                print(controller.text);
-                                print("mobx==== ${notesStore.noteTitle}");
-                                print(notesStore.editIsvalid);
-
                                 if (notesStore.editIsvalid) {
-                                  notesStore.getNotesList();
-                                  notesStore.seteditIsvalid();
-                                  controller.clear();
+                                  login.setLoading();
+                                  notesStore.editNotes(
+                                      notesStore.selectedNote.id!,
+                                      notesStore.noteTitle);
+                                  await Future.delayed(Duration(seconds: 2));
+                                  login.setLoading();
+
+                                  Messages(context).showSuccess(
+                                      'Anotação editada com sucesso.');
                                   notesStore.setNotes('');
+                                  notesStore.seteditIsvalid();
                                 } else {
                                   await notesStore.addNotes();
                                 }
@@ -94,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                                   : Icons.add),
                             ),
                       hintText: notesStore.editIsvalid
-                          ? notesStore.noteTitle
+                          ? notesStore.selectedNote.text!
                           : 'Digite seu texto',
                       onChanged: notesStore.setNotes,
                     );
@@ -114,39 +134,43 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Observer(builder: (context) {
                       return (notesStore.noteList!.length != 0)
-                          ? ListView.builder(
-                              itemCount: notesStore.noteList!.length,
-                              itemBuilder: ((context, index) {
-                                final note = notesStore.noteList![index];
-                                return WidgetNoteCard(
-                                  funcDelete: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          WidgetConfirmationDialog(
-                                        title: 'Atenção!',
-                                        message: 'Deseja Realmente Excluir?',
-                                        onConfirm: () async {
-                                          await notesStore
-                                              .removeNotes(note.id!);
-                                          Navigator.of(context).pop();
-                                          Messages(context).showSuccess(
-                                              'Anotação removida com sucesso.');
-                                        },
-                                      ),
+                          ? login.loagind
+                              ? LoadingAnimationWidget.threeArchedCircle(
+                                  color: Colors.green,
+                                  size: 60,
+                                )
+                              : ListView.builder(
+                                  itemCount: notesStore.noteList!.length,
+                                  itemBuilder: ((context, index) {
+                                    final note = notesStore.noteList[index];
+                                    return WidgetNoteCard(
+                                      funcDelete: () async {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              WidgetConfirmationDialog(
+                                            title: 'Atenção!',
+                                            message:
+                                                'Deseja Realmente Excluir?',
+                                            onConfirm: () async {
+                                              await notesStore
+                                                  .removeNotes(note.id!);
+                                              Navigator.of(context).pop();
+
+                                              Messages(context).showSuccess(
+                                                  'Anotação removida com sucesso.');
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      funcEdit: () async {
+                                        notesStore.seteditIsvalid();
+                                        notesStore.handleItemSelection(note);
+                                      },
+                                      noteText: "${note.text} == ${note.id}",
                                     );
-                                  },
-                                  funcEdit: () async {
-                                    notesStore.seteditIsvalid();
-                                    if (notesStore.noteList != null) {
-                                      // controller.text =
-                                      //     selectedNote.first.text!;
-                                    }
-                                  },
-                                  noteText: note.text!,
-                                );
-                              }),
-                            )
+                                  }),
+                                )
                           : Center(child: Text('Sem Anotações.'));
                     }),
                   );
