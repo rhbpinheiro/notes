@@ -9,6 +9,7 @@ import 'package:notes/app/shared/widgets/WidgetButton.dart';
 import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/stores/loginStore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -136,7 +137,11 @@ class _PageLoginState extends State<PageLogin> {
                           height: context.screenHeight * .2,
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            final Uri _url =
+                                Uri.parse("https://www.google.com.br");
+                            launchUrl(_url);
+                          },
                           child: const Text(
                             'Política de Privacidade',
                             style: TextStyle(

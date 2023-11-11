@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mobx/mobx.dart';
-import 'package:notes/app/controller/noteController.dart';
 import 'package:notes/app/models/noteModel.dart';
 import 'package:notes/app/shared/constants.dart';
-import 'package:notes/app/shared/helpers/loader.dart';
 import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/utils/appRouter.dart';
@@ -14,6 +11,7 @@ import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/shared/widgets/widgetConfirmDialog.dart';
 import 'package:notes/app/stores/loginStore.dart';
 import 'package:notes/app/stores/notesStore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -164,8 +162,10 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       },
                                       funcEdit: () async {
-                                        notesStore.seteditIsvalid();
-                                        notesStore.handleItemSelection(note);
+                                        if (notesStore.editIsvalid == false) {
+                                          notesStore.seteditIsvalid();
+                                          notesStore.handleItemSelection(note);
+                                        }
                                       },
                                       noteText: "${note.text} == ${note.id}",
                                     );
@@ -182,7 +182,10 @@ class _HomePageState extends State<HomePage> {
                   height: context.screenHeight * 0.1 / 2,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    final Uri _url = Uri.parse("https://www.google.com.br");
+                    launchUrl(_url);
+                  },
                   child: const Text(
                     'Política de Privacidade',
                     style: TextStyle(
