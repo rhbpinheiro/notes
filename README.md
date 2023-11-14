@@ -2,16 +2,16 @@
 
 ## Packages:
 
-- top_snackbar_flutter: ^3.1.0
-# loading_animation_widget: ^1.2.0+4
-# mobx: ^2.2.1  
-# flutter_mobx: ^2.1.1
-# shared_preferences: ^2.2.2
-# http: ^1.1.0
-# auto_size_text: ^3.0.0
-# url_launcher: ^6.1.14
-# flutter_native_splash: ^2.3.5
-# connectivity: ^3.0.6
+- top_snackbar_flutter
+- loading_animation_widget
+- mobx
+- flutter_mobx
+- shared_preferences
+- http
+- auto_size_text
+- url_launcher
+- flutter_native_splash
+- connectivity
 
 A new Flutter project.
 
