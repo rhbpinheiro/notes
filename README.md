@@ -17,6 +17,7 @@ A new Flutter project.
 
 <p float="left">
   <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/Captura_de_tela_2023-11-14_182220-removebg-preview.png"  />
+  <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/Captura_de_tela_2023-11-14_182220-removebg-preview.png"  />
 
   
  
