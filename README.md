@@ -15,7 +15,7 @@
 
 A new Flutter project.
 
-<p float="left">
+<p float="center">
   <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/loginpage.png"  />
   <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/homePage.png"  /> 
 </p>
