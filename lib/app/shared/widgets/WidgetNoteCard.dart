@@ -17,53 +17,63 @@ class WidgetNoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.grey[200],
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(1, 0), // changes position of shadow
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
       margin: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Expanded(
-            child: AutoSizeText(
-              noteText,
-              minFontSize: 8,
-              maxLines: 3,
-            ),
-          ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                onTap: funcEdit,
-                child: Icon(
-                  Icons.edit_note,
-                  size: 20,
-                  color: Colors.blue[300],
+              Expanded(
+                child: AutoSizeText(
+                  noteText,
+                  minFontSize: 12,
+                  maxLines: 5,
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 width: 10,
               ),
-              InkWell(
-                onTap: funcDelete,
-                child: Icon(
-                  Icons.delete_forever,
-                  size: 20,
-                  color: Colors.red[300],
-                ),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      InkWell(
+                        onTap: funcEdit,
+                        child: Icon(
+                          Icons.border_color_sharp,
+                          size: 25,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 2),
+                        height: 2,
+                        width: 30,
+                        color: Colors.black87,
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  InkWell(
+                    onTap: funcDelete,
+                    child: Icon(
+                      Icons.cancel,
+                      size: 30,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+          SizedBox(
+            height: 10,
+          ),
+          Divider()
         ],
       ),
     );

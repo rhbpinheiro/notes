@@ -121,12 +121,37 @@ mixin _$NotesStore on _NotesStoreBase, Store {
     return _$editNotesAsyncAction.run(() => super.editNotes(noteId, newText));
   }
 
-  late final _$getNotesListAsyncAction =
-      AsyncAction('_NotesStoreBase.getNotesList', context: context);
+  late final _$apiNotesListAsyncAction =
+      AsyncAction('_NotesStoreBase.apiNotesList', context: context);
 
   @override
-  Future<List<dynamic>> getNotesList() {
-    return _$getNotesListAsyncAction.run(() => super.getNotesList());
+  Future<List<dynamic>> apiNotesList() {
+    return _$apiNotesListAsyncAction.run(() => super.apiNotesList());
+  }
+
+  late final _$saveNotesListAsyncAction =
+      AsyncAction('_NotesStoreBase.saveNotesList', context: context);
+
+  @override
+  Future<void> saveNotesList() {
+    return _$saveNotesListAsyncAction.run(() => super.saveNotesList());
+  }
+
+  late final _$sharedNotesListAsyncAction =
+      AsyncAction('_NotesStoreBase.sharedNotesList', context: context);
+
+  @override
+  Future<List<dynamic>> sharedNotesList() {
+    return _$sharedNotesListAsyncAction.run(() => super.sharedNotesList());
+  }
+
+  late final _$getOrLoadNotesListAsyncAction =
+      AsyncAction('_NotesStoreBase.getOrLoadNotesList', context: context);
+
+  @override
+  Future<List<dynamic>> getOrLoadNotesList() {
+    return _$getOrLoadNotesListAsyncAction
+        .run(() => super.getOrLoadNotesList());
   }
 
   late final _$_NotesStoreBaseActionController =

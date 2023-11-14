@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:notes/app/shared/constants.dart';
-import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
-import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetButton.dart';
 import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/stores/loginStore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PageLogin extends StatefulWidget {
@@ -31,9 +28,6 @@ class _PageLoginState extends State<PageLogin> {
 
   @override
   Widget build(BuildContext context) {
-    print(loginStore.email);
-    print(loginStore.password);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -79,55 +73,63 @@ class _PageLoginState extends State<PageLogin> {
                         const SizedBox(
                           height: 40,
                         ),
-                        Observer(builder: (_) {
-                          return WidgetTextFormField(
-                            hintText: 'Email',
-                            title: 'Usuário',
-                            readOnly: false,
-                            obscureText: false,
-                            controller: emailController,
-                            autofocus: false,
-                            prefixIcon: const Icon(Icons.person),
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: loginStore.setEmail,
-                          );
-                        }),
-                        const SizedBox(
-                          height: 30,
+                        Observer(
+                          builder: (_) {
+                            return WidgetTextFormField(
+                              title: 'Usuário',
+                              controller: emailController,
+                              hintText: loginStore.email.isEmpty
+                                  ? 'Email'
+                                  : loginStore.email,
+                              obscureText: false,
+                              keyboardType: TextInputType.emailAddress,
+                              textAlign: TextAlign.start,
+                              prefixIcon: const Icon(Icons.person),
+                              onChanged: loginStore.setEmail,
+                            );
+                          },
                         ),
-                        Observer(builder: (_) {
-                          return WidgetTextFormField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Senha',
-                            title: 'Senha',
-                            readOnly: false,
-                            controller: passwordController,
-                            obscureText: !loginStore.visibilityPassword,
-                            autofocus: false,
-                            prefixIcon: const Icon(Icons.lock),
-                            suffixIcon: InkWell(
-                              onTap: loginStore.setVisibilityPassword,
-                              child: Icon(loginStore.visibilityPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                            ),
-                            onChanged: loginStore.setPassword,
-                          );
-                        }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Observer(
+                          builder: (_) {
+                            return WidgetTextFormField(
+                              title: 'Senha',
+                              controller: passwordController,
+                              obscureText: !loginStore.visibilityPassword,
+                              hintText: loginStore.password.isEmpty
+                                  ? 'Senha'
+                                  : loginStore.password,
+                              onChanged: loginStore.setPassword,
+                              textAlign: TextAlign.start,
+                              keyboardType: TextInputType.text,
+                              prefixIcon: const Icon(Icons.lock),
+                              suffixIcon: InkWell(
+                                onTap: loginStore.setVisibilityPassword,
+                                child: Icon(loginStore.visibilityPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                              ),
+                            );
+                          },
+                        ),
                         const SizedBox(
                           height: 30,
                         ),
                         Column(
                           children: [
-                            WidgetButton(
-                                width: 150,
-                                height: 40,
-                                title: 'Entar',
-                                background: const Color(0xff44bd6e),
-                                titleColor: Colors.white,
-                                function: () {
-                                  _signIn();
-                                }),
+                            Observer(builder: (_) {
+                              return WidgetButton(
+                                  width: 150,
+                                  height: 40,
+                                  title: 'Entar',
+                                  background: const Color(0xff44bd6e),
+                                  titleColor: Colors.white,
+                                  function: () async {
+                                    loginStore.signIn(context);
+                                  });
+                            }),
                             const SizedBox(
                               height: 20,
                             ),
@@ -138,9 +140,9 @@ class _PageLoginState extends State<PageLogin> {
                         ),
                         InkWell(
                           onTap: () {
-                            final Uri _url =
+                            final Uri url =
                                 Uri.parse("https://www.google.com.br");
-                            launchUrl(_url);
+                            launchUrl(url);
                           },
                           child: const Text(
                             'Política de Privacidade',
@@ -159,66 +161,5 @@ class _PageLoginState extends State<PageLogin> {
         ),
       ),
     );
-  }
-
-  bool _validate() {
-    final RegExp specialChars = RegExp(r'[!@#%^&*()]');
-    final RegExp emailValid =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-
-    if (!emailValid.hasMatch(loginStore.email)) {
-      Messages(context).showError('Digite um email válido.');
-      return false;
-    }
-    if (loginStore.email.length > 20 || loginStore.password.length > 20) {
-      Messages(context).showError(
-          'Os campos Usuário e Senha devem conter no máximo 20 caracteres.');
-      return false;
-    }
-    if (loginStore.email.isEmpty) {
-      Messages(context).showError('O campo Usuário é obrigatorio.');
-      return false;
-    }
-    if (loginStore.email.endsWith(' ')) {
-      Messages(context)
-          .showError('O campo Usuário não pode terminar com espaço.');
-      return false;
-    }
-    if (loginStore.email.endsWith(' ')) {
-      Messages(context)
-          .showError('O campo Usuário não pode terminar com espaço.');
-      return false;
-    }
-    if (loginStore.password.endsWith(' ')) {
-      Messages(context)
-          .showError('O campo Senha não pode terminar com espaço.');
-      return false;
-    }
-    if (loginStore.password.isEmpty) {
-      Messages(context).showError('O campo Senha é obrigatorio.');
-      return false;
-    }
-    if (loginStore.password.length <= 2) {
-      Messages(context)
-          .showError('O campo Senha deve conter mais de 2 caracteres.');
-      return false;
-    }
-    if (specialChars.hasMatch(loginStore.password)) {
-      Messages(context)
-          .showError('O campo Senha não pode ter caracteres especiais.');
-      return false;
-    }
-    return true;
-  }
-
-  void _signIn() async {
-    if (_validate()) {
-      loginStore.setLoading();
-      loginStore.savePrefsLogin(loginStore.email, loginStore.password);
-      await Future.delayed(Duration(seconds: 2));
-      Messages(context).showSuccess('Login efetuado com sucesso.');
-      loginStore.setLoading();
-      Navigator.of(context).pushReplacementNamed(AppRoutes.HOME);
-    }
   }
 }

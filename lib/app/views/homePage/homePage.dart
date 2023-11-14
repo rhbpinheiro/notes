@@ -7,7 +7,6 @@ import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetNoteCard.dart';
-import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
 import 'package:notes/app/shared/widgets/widgetConfirmDialog.dart';
 import 'package:notes/app/stores/loginStore.dart';
 import 'package:notes/app/stores/notesStore.dart';
@@ -27,15 +26,9 @@ class _HomePageState extends State<HomePage> {
   LoginStore login = LoginStore();
   late List<String> userEmail;
   TextEditingController controller = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    notesStore.getNotesList();
-  }
 
   @override
   Widget build(BuildContext context) {
-    print(login.email);
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -68,77 +61,31 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Minhas Anotações',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                  ),
-                ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
-                Observer(
-                  builder: (_) {
-                    return WidgetTextFormField(
-                      keyboardType: TextInputType.text,
-                      title: '',
-                      controller: controller,
-                      obscureText: false,
-                      autofocus: true,
-                      readOnly: false,
-                      suffixIcon: !notesStore.isFormValid
-                          ? null
-                          : InkWell(
-                              onTap: () async {
-                                if (notesStore.editIsvalid) {
-                                  login.setLoading();
-                                  notesStore.editNotes(
-                                      notesStore.selectedNote.id!,
-                                      notesStore.noteTitle);
-                                  await Future.delayed(Duration(seconds: 2));
-                                  login.setLoading();
-
-                                  Messages(context).showSuccess(
-                                      'Anotação editada com sucesso.');
-                                  notesStore.setNotes('');
-                                  notesStore.seteditIsvalid();
-                                } else {
-                                  await notesStore.addNotes();
-                                }
-                              },
-                              child: Icon(notesStore.editIsvalid
-                                  ? Icons.save
-                                  : Icons.add),
-                            ),
-                      hintText: notesStore.editIsvalid
-                          ? notesStore.selectedNote.text!
-                          : 'Digite seu texto',
-                      onChanged: notesStore.setNotes,
-                    );
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Builder(builder: (context) {
-                  return Container(
-                    width: context.screenWidth * .85,
-                    height: context.screenHeight * .5,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Observer(builder: (context) {
-                      return (notesStore.noteList!.length != 0)
-                          ? login.loagind
-                              ? LoadingAnimationWidget.threeArchedCircle(
-                                  color: Colors.green,
-                                  size: 60,
-                                )
-                              : ListView.builder(
-                                  itemCount: notesStore.noteList!.length,
+                FutureBuilder(
+                    future: notesStore.getOrLoadNotesList(),
+                    builder: (context, snapshot) {
+                      return Container(
+                        width: context.screenWidth * .85,
+                        height: context.screenHeight * .5,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Observer(builder: (context) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return LoadingAnimationWidget.threeArchedCircle(
+                              color: const Color(0xFF1f5466),
+                              size: 60,
+                            );
+                          }
+                          return notesStore.noteList.isNotEmpty
+                              ? ListView.builder(
+                                  itemCount: notesStore.noteList.length,
                                   itemBuilder: ((context, index) {
                                     final note = notesStore.noteList[index];
                                     return WidgetNoteCard(
@@ -150,9 +97,8 @@ class _HomePageState extends State<HomePage> {
                                             title: 'Atenção!',
                                             message:
                                                 'Deseja Realmente Excluir?',
-                                            onConfirm: () async {
-                                              await notesStore
-                                                  .removeNotes(note.id!);
+                                            onConfirm: () {
+                                              notesStore.removeNotes(note.id!);
                                               Navigator.of(context).pop();
 
                                               Messages(context).showSuccess(
@@ -167,24 +113,90 @@ class _HomePageState extends State<HomePage> {
                                           notesStore.handleItemSelection(note);
                                         }
                                       },
-                                      noteText: "${note.text} == ${note.id}",
+                                      noteText: note.text!,
                                     );
                                   }),
                                 )
-                          : Center(child: Text('Sem Anotações.'));
+                              : const Center(
+                                  child: Text('Sem Anotações'),
+                                );
+                        }),
+                      );
                     }),
-                  );
-                }),
                 const SizedBox(
                   height: 20,
                 ),
+                Observer(
+                  builder: (_) {
+                    return Container(
+                      height: 50,
+                      padding: const EdgeInsets.only(left: 30, right: 30),
+                      child: TextFormField(
+                        onChanged: notesStore.setNotes,
+                        controller: controller,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: notesStore.editIsvalid
+                              ? notesStore.selectedNote.text
+                              : 'Digite seu texto.',
+                          filled: true,
+                          suffixIcon: !notesStore.isFormValid
+                              ? null
+                              : InkWell(
+                                  onTap: () {
+                                    if (notesStore.editIsvalid) {
+                                      login.setLoading();
+                                      notesStore.editNotes(
+                                          notesStore.selectedNote.id!,
+                                          notesStore.noteTitle);
+                                      Future.delayed(
+                                          const Duration(seconds: 1));
+                                      login.setLoading();
+
+                                      Messages(context).showSuccess(
+                                          'Anotação editada com sucesso.');
+
+                                      notesStore.seteditIsvalid();
+                                      controller.clear();
+                                      notesStore.setNotes('');
+                                    } else {
+                                      login.setLoading();
+
+                                      notesStore.addNotes();
+                                      Future.delayed(
+                                          const Duration(seconds: 1));
+                                      login.setLoading();
+                                      Messages(context).showSuccess(
+                                          'Anotação adicionada com sucesso.');
+                                      controller.clear();
+                                      notesStore.setNotes('');
+                                    }
+                                  },
+                                  child: Icon(notesStore.editIsvalid
+                                      ? Icons.save
+                                      : Icons.add),
+                                ),
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF1f5466),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(
-                  height: context.screenHeight * 0.1 / 2,
+                  height: context.screenHeight * 0.1,
                 ),
                 InkWell(
                   onTap: () {
-                    final Uri _url = Uri.parse("https://www.google.com.br");
-                    launchUrl(_url);
+                    final Uri url = Uri.parse("https://www.google.com.br");
+                    launchUrl(url);
                   },
                   child: const Text(
                     'Política de Privacidade',
@@ -194,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 )
               ],
             ),

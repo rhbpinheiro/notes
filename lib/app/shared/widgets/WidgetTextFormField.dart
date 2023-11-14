@@ -2,9 +2,10 @@
 import 'package:flutter/material.dart';
 
 class WidgetTextFormField extends StatelessWidget {
-  final TextEditingController controller;
-  final String title;
+  TextEditingController controller;
+  String? title;
   final String hintText;
+  final String? initialValue;
   final bool? obscureText;
   final bool? autofocus;
   final Widget? prefixIcon;
@@ -12,20 +13,24 @@ class WidgetTextFormField extends StatelessWidget {
   final bool? readOnly;
   final Function(String)? onChanged;
   final TextInputType keyboardType;
+  final TextAlign textAlign;
 
-  WidgetTextFormField({
-    Key? key,
-    required this.controller,
-    required this.title,
-    required this.hintText,
-    this.obscureText,
-    this.autofocus,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.readOnly,
-    this.onChanged,
-    required this.keyboardType,
-  }) : super(key: key);
+  WidgetTextFormField
+  (
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      this.obscureText,
+      this.autofocus,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.readOnly,
+      this.onChanged,
+      required this.keyboardType,
+      required this.textAlign,
+      this.initialValue,
+      this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,23 +40,23 @@ class WidgetTextFormField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            title!,
             style: const TextStyle(color: Colors.white),
           ),
           const SizedBox(
             height: 5,
           ),
           TextFormField(
-            autofocus: autofocus!,
             obscureText: obscureText!,
-            onChanged: onChanged,
-            readOnly: readOnly!,
             keyboardType: keyboardType,
+            onChanged: onChanged,
+            controller: controller,
+            textAlign: textAlign,
             decoration: InputDecoration(
               hintText: hintText,
               filled: true,
-              prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
+              prefixIcon: prefixIcon,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderSide: const BorderSide(

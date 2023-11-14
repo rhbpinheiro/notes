@@ -24,7 +24,7 @@ flutter_native_splash:
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,
   # see the Android 12 section below.
   #branding: assets/dart.png
-  branding: "assets/images/Notes.png"
+  branding: "assets/images/Notes960.png"
   branding_mode: center
 
   # To position the branding image at the bottom of the screen you can use bottom, bottomRight,
@@ -54,7 +54,7 @@ flutter_native_splash:
     # 768 pixels in diameter.
     #image: assets/android12splash.png
     color: "#1f5466"
-    image: "assets/images/Notes.png"
+    image: "assets/images/Notes960.png"
     icon_background_color: "#1f5466"
     #branding: "assets/images/icna_texto.png"
     #branding_mode: bottom

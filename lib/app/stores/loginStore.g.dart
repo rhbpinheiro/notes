@@ -90,6 +90,14 @@ mixin _$LoginStore on _LoginStoreBase, Store {
         .run(() => super.savePrefsLogin(email, password));
   }
 
+  late final _$signInAsyncAction =
+      AsyncAction('_LoginStoreBase.signIn', context: context);
+
+  @override
+  Future signIn(BuildContext context) {
+    return _$signInAsyncAction.run(() => super.signIn(context));
+  }
+
   late final _$_LoginStoreBaseActionController =
       ActionController(name: '_LoginStoreBase', context: context);
 
@@ -132,6 +140,17 @@ mixin _$LoginStore on _LoginStoreBase, Store {
         name: '_LoginStoreBase.setLoading');
     try {
       return super.setLoading();
+    } finally {
+      _$_LoginStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  bool validate(BuildContext context) {
+    final _$actionInfo = _$_LoginStoreBaseActionController.startAction(
+        name: '_LoginStoreBase.validate');
+    try {
+      return super.validate(context);
     } finally {
       _$_LoginStoreBaseActionController.endAction(_$actionInfo);
     }
