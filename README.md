@@ -1,6 +1,6 @@
 # Notes
 
-# Packages:
+## Packages:
 
 [top_snackbar_flutter: ^3.1.0]
 # loading_animation_widget: ^1.2.0+4
