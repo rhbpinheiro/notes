@@ -2,7 +2,7 @@
 
 ## Packages:
 
-[top_snackbar_flutter: ^3.1.0]
+- top_snackbar_flutter: ^3.1.0
 # loading_animation_widget: ^1.2.0+4
 # mobx: ^2.2.1  
 # flutter_mobx: ^2.1.1
