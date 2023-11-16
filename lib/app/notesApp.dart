@@ -13,7 +13,7 @@ class Notesapp extends StatelessWidget {
       title: 'Notes App',
       theme: ThemeData(
         fontFamily: 'Roboto',
-        useMaterial3: false,
+        useMaterial3: true,
       ),
       routes: {
         AppRoutes.AUTH_OR_HOME: (context) => const PageLogin(),

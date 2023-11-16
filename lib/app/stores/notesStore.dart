@@ -1,14 +1,22 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:notes/app/controller/noteController.dart';
 import 'package:notes/app/models/noteModel.dart';
+import 'package:notes/app/shared/helpers/messages.dart';
+import 'package:notes/app/shared/widgets/widgetConfirmDialog.dart';
+import 'package:notes/app/stores/connectionStore.dart';
+import 'package:notes/app/stores/loginStore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'notesStore.g.dart';
 
 class NotesStore = _NotesStoreBase with _$NotesStore;
 
 abstract class _NotesStoreBase with Store {
+  ConnectionStore connectionStore = ConnectionStore();
+  LoginStore login = LoginStore();
+
   @observable
   bool loagindNote = false;
 
@@ -38,28 +46,69 @@ abstract class _NotesStoreBase with Store {
   ObservableList<NoteModel> noteList = ObservableList<NoteModel>();
 
   @action
-  Future<void> addNotes() async {
-    final newNote = NoteModel(text: noteTitle);
+  Future<void> addNotes(String text, BuildContext context) async {
+    login.setLoading();
 
-    final addedNote = await NoteController().addNote(newNote.text!);
-    if (addedNote != null) {
-      noteList.insert(0, addedNote);
+    final addNote = await NoteController().addNote(text);
+
+    Future.delayed(const Duration(seconds: 1));
+
+    login.setLoading();
+
+    Messages(context).showSuccess('Anotação adicionada com sucesso.');
+
+    setNotes('');
+
+    if (addNote != null) {
+      noteList.insert(0, addNote);
       saveNotesList();
-    } else {
-      print("Erro ao adicionar a nota à API.");
     }
   }
 
   @action
-  Future<void> removeNotes(String noteId) async {
-    await NoteController().delete(noteId);
-    apiNotesList();
-    saveNotesList();
+  Future<void> removeNotes(String noteId, BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => WidgetConfirmationDialog(
+        title: 'Atenção!',
+        message: 'Deseja Realmente Excluir?',
+        onConfirm: () async {
+          await NoteController().delete(noteId);
+
+          apiNotesList();
+
+          saveNotesList();
+
+          Navigator.of(context).pop();
+
+          Messages(context).showSuccess(
+            'Anotação removida com sucesso.',
+          );
+        },
+      ),
+    );
   }
 
   @action
-  Future<void> editNotes(String noteId, String newText) async {
+  Future<void> editNotes(
+    String noteId,
+    String newText,
+    BuildContext context,
+  ) async {
+    login.setLoading();
+
     await NoteController().update(noteId, newText);
+
+    Future.delayed(const Duration(seconds: 1));
+
+    login.setLoading();
+
+    Messages(context).showSuccess('Anotação editada com sucesso.');
+
+    seteditIsvalid();
+
+    setNotes('');
+
     apiNotesList();
   }
 
@@ -67,6 +116,7 @@ abstract class _NotesStoreBase with Store {
   Future<List<dynamic>> apiNotesList() async {
     List<NoteModel> fetchedNotes = await NoteController().getAllNotes();
     noteList = ObservableList.of(fetchedNotes);
+    saveNotesList();
     return fetchedNotes;
   }
 
@@ -106,7 +156,11 @@ abstract class _NotesStoreBase with Store {
 
   @action
   Future<List<dynamic>> getOrLoadNotesList() async {
-    return await apiNotesList();
+    if (connectionStore.connectionStatus == ConnectionStatus.connected) {
+      return await apiNotesList();
+    } else {
+      return await sharedNotesList();
+    }
   }
 
   @observable

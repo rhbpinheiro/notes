@@ -117,24 +117,26 @@ mixin _$NotesStore on _NotesStoreBase, Store {
       AsyncAction('_NotesStoreBase.addNotes', context: context);
 
   @override
-  Future<void> addNotes() {
-    return _$addNotesAsyncAction.run(() => super.addNotes());
+  Future<void> addNotes(String text, BuildContext context) {
+    return _$addNotesAsyncAction.run(() => super.addNotes(text, context));
   }
 
   late final _$removeNotesAsyncAction =
       AsyncAction('_NotesStoreBase.removeNotes', context: context);
 
   @override
-  Future<void> removeNotes(String noteId) {
-    return _$removeNotesAsyncAction.run(() => super.removeNotes(noteId));
+  Future<void> removeNotes(String noteId, BuildContext context) {
+    return _$removeNotesAsyncAction
+        .run(() => super.removeNotes(noteId, context));
   }
 
   late final _$editNotesAsyncAction =
       AsyncAction('_NotesStoreBase.editNotes', context: context);
 
   @override
-  Future<void> editNotes(String noteId, String newText) {
-    return _$editNotesAsyncAction.run(() => super.editNotes(noteId, newText));
+  Future<void> editNotes(String noteId, String newText, BuildContext context) {
+    return _$editNotesAsyncAction
+        .run(() => super.editNotes(noteId, newText, context));
   }
 
   late final _$apiNotesListAsyncAction =

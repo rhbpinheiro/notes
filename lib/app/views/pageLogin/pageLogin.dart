@@ -3,8 +3,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:notes/app/shared/constants.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
-import 'package:notes/app/shared/widgets/WidgetButton.dart';
-import 'package:notes/app/shared/widgets/WidgetTextFormField.dart';
+import 'package:notes/app/shared/widgets/widgetButton.dart';
+import 'package:notes/app/shared/widgets/widgetTextFormField.dart';
 import 'package:notes/app/stores/loginStore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,10 +33,14 @@ class _PageLoginState extends State<PageLogin> {
         elevation: 0,
         title: const Text(
           'Anotações',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF1f5466),
+        backgroundColor: const Color(
+          0xFF1f5466,
+        ),
       ),
       body: Container(
         alignment: Alignment.center,
@@ -85,7 +89,9 @@ class _PageLoginState extends State<PageLogin> {
                               obscureText: false,
                               keyboardType: TextInputType.emailAddress,
                               textAlign: TextAlign.start,
-                              prefixIcon: const Icon(Icons.person),
+                              prefixIcon: const Icon(
+                                Icons.person,
+                              ),
                               onChanged: loginStore.setEmail,
                             );
                           },
@@ -105,12 +111,16 @@ class _PageLoginState extends State<PageLogin> {
                               onChanged: loginStore.setPassword,
                               textAlign: TextAlign.start,
                               keyboardType: TextInputType.text,
-                              prefixIcon: const Icon(Icons.lock),
+                              prefixIcon: const Icon(
+                                Icons.lock,
+                              ),
                               suffixIcon: InkWell(
                                 onTap: loginStore.setVisibilityPassword,
-                                child: Icon(loginStore.visibilityPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
+                                child: Icon(
+                                  loginStore.visibilityPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
                               ),
                             );
                           },
@@ -120,17 +130,23 @@ class _PageLoginState extends State<PageLogin> {
                         ),
                         Column(
                           children: [
-                            Observer(builder: (_) {
-                              return WidgetButton(
-                                  width: 150,
-                                  height: 40,
-                                  title: 'Entar',
-                                  background: const Color(0xff44bd6e),
-                                  titleColor: Colors.white,
-                                  function: () async {
-                                    loginStore.signIn(context);
-                                  });
-                            }),
+                            Observer(
+                              builder: (_) {
+                                return WidgetButton(
+                                    width: 150,
+                                    height: 40,
+                                    title: 'Entar',
+                                    background: const Color(
+                                      0xff44bd6e,
+                                    ),
+                                    titleColor: Colors.white,
+                                    function: () async {
+                                      loginStore.signIn(
+                                        context,
+                                      );
+                                    });
+                              },
+                            ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -141,8 +157,9 @@ class _PageLoginState extends State<PageLogin> {
                         ),
                         InkWell(
                           onTap: () {
-                            final Uri url =
-                                Uri.parse("https://www.google.com.br");
+                            final Uri url = Uri.parse(
+                              "https://www.google.com.br",
+                            );
                             launchUrl(url);
                           },
                           child: const Text(
