@@ -41,13 +41,13 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => WidgetConfirmationDialog(
+                builder: (_) => WidgetConfirmationDialog(
                   title: 'Atenção!',
                   message: 'Deseja Realmente Sair?',
-                  onConfirm: () {
-                    Navigator.of(context).pushReplacementNamed(
-                      AppRoutes.AUTH_OR_HOME,
-                    );
+                  onConfirm: () async {
+                    Navigator.of(context).pop();
+                    await Navigator.of(context)
+                        .popAndPushNamed(AppRoutes.AUTH_OR_HOME);
                   },
                 ),
               );
