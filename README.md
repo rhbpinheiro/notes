@@ -11,11 +11,15 @@
 - auto_size_text
 - url_launcher
 - flutter_native_splash
-- connectivity
+- internet_connection_checker
+
+## Api:
+
+-MockApi
 
 <p float="left">
-  <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/loginpage.png"  />
-  <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/homePage.png"  /> 
+  <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/Notes_App.png"  />
+
 </p>
 
 A new Flutter project.
