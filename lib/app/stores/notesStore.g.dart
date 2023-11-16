@@ -81,6 +81,22 @@ mixin _$NotesStore on _NotesStoreBase, Store {
     });
   }
 
+  late final _$loadedNotesAtom =
+      Atom(name: '_NotesStoreBase.loadedNotes', context: context);
+
+  @override
+  List<NoteModel> get loadedNotes {
+    _$loadedNotesAtom.reportRead();
+    return super.loadedNotes;
+  }
+
+  @override
+  set loadedNotes(List<NoteModel> value) {
+    _$loadedNotesAtom.reportWrite(value, super.loadedNotes, () {
+      super.loadedNotes = value;
+    });
+  }
+
   late final _$selectedNoteAtom =
       Atom(name: '_NotesStoreBase.selectedNote', context: context);
 
@@ -208,6 +224,7 @@ loagindNote: ${loagindNote},
 noteTitle: ${noteTitle},
 editIsvalid: ${editIsvalid},
 noteList: ${noteList},
+loadedNotes: ${loadedNotes},
 selectedNote: ${selectedNote},
 isFormValid: ${isFormValid}
     ''';

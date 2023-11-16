@@ -10,7 +10,7 @@ class NoteController {
     final response = await http.get(Uri.parse('$apiUrl/notes'));
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
       return data.map((note) => NoteModel.fromJson(note)).toList();
     } else {
       throw Exception('Erro ao buscar notas da API');

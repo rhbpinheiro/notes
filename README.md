@@ -13,12 +13,14 @@
 - flutter_native_splash
 - connectivity
 
-A new Flutter project.
-
-<p float="center">
+<p float="left">
   <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/loginpage.png"  />
   <img src="https://github.com/rhbpinheiro/notes/blob/main/assets/images/homePage.png"  /> 
 </p>
+
+A new Flutter project.
+
+
 
 ## Getting Started
 

@@ -12,7 +12,8 @@ class Notesapp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Notes App',
       theme: ThemeData(
-        useMaterial3: true,
+        fontFamily: 'Roboto',
+        useMaterial3: false,
       ),
       routes: {
         AppRoutes.AUTH_OR_HOME: (context) => const PageLogin(),

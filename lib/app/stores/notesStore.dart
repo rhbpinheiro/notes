@@ -4,7 +4,6 @@ import 'package:mobx/mobx.dart';
 import 'package:notes/app/controller/noteController.dart';
 import 'package:notes/app/models/noteModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity/connectivity.dart';
 part 'notesStore.g.dart';
 
 class NotesStore = _NotesStoreBase with _$NotesStore;
@@ -67,9 +66,7 @@ abstract class _NotesStoreBase with Store {
   @action
   Future<List<dynamic>> apiNotesList() async {
     List<NoteModel> fetchedNotes = await NoteController().getAllNotes();
-
     noteList = ObservableList.of(fetchedNotes);
-
     return fetchedNotes;
   }
 
@@ -77,11 +74,16 @@ abstract class _NotesStoreBase with Store {
   Future<void> saveNotesList() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> notesListJson =
-        noteList.map((note) => jsonEncode(note.toJson())).toList();
+    List<String> notesListJson = noteList.map((note) {
+      String encodedNote = jsonEncode(note.toJson());
+      return utf8.decode(encodedNote.runes.toList());
+    }).toList();
 
     await prefs.setStringList('notesList', notesListJson);
   }
+
+  @observable
+  List<NoteModel> loadedNotes = [];
 
   @action
   Future<List<dynamic>> sharedNotesList() async {
@@ -90,7 +92,11 @@ abstract class _NotesStoreBase with Store {
     List<String> notesListJson = prefs.getStringList('notesList') ?? [];
 
     List<NoteModel> loadedNotes = notesListJson
-        .map((noteJson) => NoteModel.fromJson(jsonDecode(noteJson)))
+        .map(
+          (noteJson) => NoteModel.fromJson(
+            jsonDecode(noteJson),
+          ),
+        )
         .toList();
 
     noteList = ObservableList.of(loadedNotes);
@@ -100,12 +106,7 @@ abstract class _NotesStoreBase with Store {
 
   @action
   Future<List<dynamic>> getOrLoadNotesList() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      return await sharedNotesList();
-    } else {
-      return await apiNotesList();
-    }
+    return await apiNotesList();
   }
 
   @observable

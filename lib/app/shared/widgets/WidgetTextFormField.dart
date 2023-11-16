@@ -15,8 +15,7 @@ class WidgetTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
   final TextAlign textAlign;
 
-  WidgetTextFormField
-  (
+  WidgetTextFormField(
       {Key? key,
       required this.controller,
       required this.hintText,

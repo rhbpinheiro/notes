@@ -30,6 +30,7 @@ class _PageLoginState extends State<PageLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text(
           'Anotações',
           style: TextStyle(color: Colors.white),
@@ -56,7 +57,7 @@ class _PageLoginState extends State<PageLogin> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: context.screenHeight * .2,
+                          height: context.screenWidth * .5,
                         ),
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
