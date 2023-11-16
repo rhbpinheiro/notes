@@ -6,6 +6,7 @@ import 'package:notes/app/shared/helpers/messages.dart';
 import 'package:notes/app/shared/helpers/size_extensions.dart';
 import 'package:notes/app/shared/utils/appRouter.dart';
 import 'package:notes/app/shared/widgets/WidgetNoteCard.dart';
+import 'package:notes/app/shared/widgets/widgetConfirmDialog.dart';
 import 'package:notes/app/shared/widgets/widgetTextFormFieldAddNote.dart';
 import 'package:notes/app/stores/connectionStore.dart';
 import 'package:notes/app/stores/notesStore.dart';
@@ -38,8 +39,17 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushReplacementNamed(
-                AppRoutes.AUTH_OR_HOME,
+              showDialog(
+                context: context,
+                builder: (context) => WidgetConfirmationDialog(
+                  title: 'Atenção!',
+                  message: 'Deseja Realmente Sair?',
+                  onConfirm: () {
+                    Navigator.of(context).pushReplacementNamed(
+                      AppRoutes.AUTH_OR_HOME,
+                    );
+                  },
+                ),
               );
             },
             icon: const Icon(
